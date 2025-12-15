@@ -1,0 +1,99 @@
+# Docker Compose para Teken App
+# Levanta toda la aplicación: PostgreSQL, Backend y Frontend
+
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: teken-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: teken_user
+      POSTGRES_PASSWORD: teken_password
+      POSTGRES_DB: teken_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - teken-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U teken_user -d teken_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Node.js/Express
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: teken-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://teken_user:teken_password@postgres:5432/teken_db
+      FRONTEND_URL: http://localhost:3001
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - teken-network
+    command: npm run dev
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: teken-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend/public:/app/public
+    depends_on:
+      - backend
+    networks:
+      - teken-network
+    command: npm run serve
+
+  # pgAdmin (Opcional - para administrar la BD)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: teken-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@teken.app
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - teken-network
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  teken-network:
+    driver: bridge

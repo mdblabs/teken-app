@@ -1,0 +1,30 @@
+# Ignorar archivos de Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Ignorar node_modules (se instalan en el contenedor)
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Ignorar archivos de git
+.git
+.gitignore
+
+# Ignorar logs
+*.log
+npm-debug.log*
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
