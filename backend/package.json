@@ -1,0 +1,26 @@
+{
+  "name": "teken-app-backend",
+  "version": "1.0.0",
+  "description": "Backend para Teken App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "backend",
+    "express",
+    "api"
+  ],
+  "author": "mdblabs",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.1",
+    "jsonwebtoken": "^9.0.3"
+  }
+}

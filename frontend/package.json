@@ -1,0 +1,15 @@
+{
+  "name": "teken-app-frontend",
+  "version": "1.0.0",
+  "description": "Frontend responsive para Teken App",
+  "main": "index.html",
+  "scripts": {
+    "serve": "npx http-server public -p 3001"
+  },
+  "keywords": ["frontend", "mobile", "responsive"],
+  "author": "mdblabs",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
